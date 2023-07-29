@@ -67,7 +67,7 @@ contract('Token test', (accounts) => {
     })
 
     it('insert user in blacklist', async () => {
-        await this.blacklist.allowedToken(this.token.address, {from: deployer})
+        await this.blacklist.allowToken(this.token.address, {from: deployer})
         await this.token.insertInBlackList(thirdAccount, {from: deployer})
         console.log(await this.blacklist.getBlacklistStatus(thirdAccount))
     })
@@ -92,5 +92,30 @@ contract('Token test', (accounts) => {
 
     it('transfer to user not in blacklist', async () => {
         await this.token.transfer(thirdAccount, web3.utils.toWei('10'), {from: deployer})
+    })
+
+    it('check if token is allowed', async () => {
+        expect(this.blacklist.isTokenAllowed(this.token.address), true)
+    })
+
+    it('check if token is not allowed', async () => {
+        expect(this.blacklist.isTokenAllowed(secondAccount), false)
+    })
+
+    it('disallow token', async () => {
+        await this.blacklist.disallowToken(this.token.address, {from: deployer})
+        expect(this.blacklist.isTokenAllowed(this.token.address), false)
+    })
+
+    it('check if address 0 is not allowed', async () => {
+        expectRevert(this.blacklist.isTokenAllowed(ZERO_ADDRESS), 'Invalid token address')
+    })
+
+    it('disallow address 0', async () => {
+        expectRevert(await this.blacklist.disallowToken(ZERO_ADDRESS, {from: deployer}), 'Invalid token address')
+    })
+
+    it('allow address 0', async () => {
+        expectRevert(await this.blacklist.allowToken(ZERO_ADDRESS, {from: deployer}), 'Invalid token address')
     })
 })

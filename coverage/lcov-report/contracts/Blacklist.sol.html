@@ -20,9 +20,9 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">75% </span>
+        <span class="strong">84.62% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>9/12</span>
+        <span class='fraction'>11/13</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">50% </span>
@@ -32,16 +32,16 @@
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>5/5</span>
+        <span class='fraction'>8/8</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>9/9</span>
+        <span class='fraction'>12/12</span>
       </div>
     </div>
   </div>
-  <div class='status-line medium'></div>
+  <div class='status-line high'></div>
 <pre><table class="coverage">
 <tr><td class="line-count quiet">1
 2
@@ -91,7 +91,13 @@
 46
 47
 48
-49</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+49
+50
+51
+52
+53
+54
+55</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -103,6 +109,24 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -118,26 +142,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
@@ -154,46 +166,52 @@ contract Blacklist is Ownable, IBlacklist {
 &nbsp;
     constructor() {}
 &nbsp;
-    function allowedToken(address token) external onlyOwner {
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (token == address(0)) <span class="cstat-no" title="statement not covered" >revert()</span>;
+    // Modifier to allow only the owner or allowed tokens to execute certain functions
+    modifier onlyOwnerOrAllowed() {
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(msg.sender==owner() || allowedTokens[msg.sender]);
+        _;
+    }
+&nbsp;
+    // Function to check if a token is allowed
+    function isTokenAllowed(address token) public view returns (bool) {
+        return allowedTokens[token];
+    }
+&nbsp;
+    // Function to allow a token (onlyOwner can call this)
+    function allowToken(address token) external onlyOwner {
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (token == address(0)) <span class="cstat-no" title="statement not covered" >revert('Invalid token address')</span>;
         allowedTokens[token] = true;
     }
 &nbsp;
-    // Getters to allow the same blacklist to be used also by other contracts (including upgraded Tether)
+    // Function to disallow a token (onlyOwner can call this)
+    function disallowToken(address token) external onlyOwner {
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (token == address(0)) <span class="cstat-no" title="statement not covered" >revert('Invalid token address')</span>;
+        allowedTokens[token] = false;
+    }
+&nbsp;
+    // Getters to allow the same blacklist to be used also by other contracts
     function getBlacklistStatus(address _maker) external view returns (bool) {
         return isBlackListed[_maker];
     }
 &nbsp;
-    // function getOwner() external returns (address) {
-    //     return owner;
-    // }
-&nbsp;
-    function addBlackList(address _evilUser, address token) external {
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (!allowedTokens[token]) <span class="cstat-no" title="statement not covered" >revert()</span>;
+    // Function to add an address to the blacklist (onlyOwner or allowed tokens can call this)
+    function addBlackList(address _evilUser) external onlyOwnerOrAllowed() {
         isBlackListed[_evilUser] = true;
         emit AddedBlackList(_evilUser);
     }
 &nbsp;
-    function removeBlackList(address _clearedUser, address token) external {
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (!allowedTokens[token]) <span class="cstat-no" title="statement not covered" >revert()</span>;
+    // Function to remove an address from the blacklist (onlyOwner or allowed tokens can call this)
+    function removeBlackList(address _clearedUser) external onlyOwnerOrAllowed() {
         isBlackListed[_clearedUser] = false;
         emit RemovedBlackList(_clearedUser);
     }
-&nbsp;
-    // function destroyBlackFunds (address _blackListedUser) public onlyOwner {
-    //     require(isBlackListed[_blackListedUser]);
-    //     uint dirtyFunds = balanceOf(_blackListedUser);
-    //     balances[_blackListedUser] = 0;
-    //     _totalSupply -= dirtyFunds;
-    //     DestroyedBlackFunds(_blackListedUser, dirtyFunds);
-    // }
 }</pre></td></tr>
 </table></pre>
 <div class='push'></div><!-- for sticky footer -->
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Jul 21 2023 13:04:58 GMT+0200 (Central European Summer Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Jul 28 2023 19:11:45 GMT+0200 (Central European Summer Time)
 </div>
 </div>
 <script src="../prettify.js"></script>

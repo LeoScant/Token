@@ -20,14 +20,14 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">85.71% </span>
+        <span class="strong">83.33% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>6/7</span>
+        <span class='fraction'>10/12</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">100% </span>
+        <span class="strong">83.33% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>2/2</span>
+        <span class='fraction'>5/6</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">83.33% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>5/6</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">87.5% </span>
+        <span class="strong">84.62% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>7/8</span>
+        <span class='fraction'>11/13</span>
       </div>
     </div>
   </div>
@@ -88,8 +88,12 @@
 43
 44
 45
-46
-47</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+46</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -101,93 +105,86 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">3×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">11×</span>
 <span class="cline-any cline-yes">11×</span>
-<span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// SPDX-License-Identifier: MIT
-&nbsp;
 pragma solidity ^0.8.0;
+&nbsp;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IBlacklist.sol";
 &nbsp;
 contract Token is ERC20, Ownable{
-    IBlacklist public blacklistConctract;
+    IBlacklist public blacklistContract;
+&nbsp;
+    event TokensMinted(address indexed account, uint256 amount);
+    event TokensBurned(address indexed account, uint256 amount);
+    event AddedToBlacklist(address indexed user);
+    event RemovedFromBlacklist(address indexed user);
 &nbsp;
     constructor(string memory tokenName, string memory tokenSym, address blAddress) ERC20(tokenName, tokenSym) {
-        blacklistConctract = IBlacklist(blAddress);
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(blAddress != address(0), "Invalid blacklist contract address");
+        blacklistContract = IBlacklist(blAddress);
     }
-&nbsp;
-    // function decimals() public pure override returns (uint8) {
-    //     return 8;
-    // }
 &nbsp;
     function mint(address account, uint256 amount) external onlyOwner {
         _mint(account, amount);
+        emit TokensMinted(account, amount);
     }
 &nbsp;
 <span class="fstat-no" title="function not covered" >    function burn(uint256 amount) external {</span>
 <span class="cstat-no" title="statement not covered" >        _burn(msg.sender, amount)</span>;
+<span class="cstat-no" title="statement not covered" >        emit TokensBurned(msg.sender, amount);</span>
     }
 &nbsp;
     function insertInBlackList(address user) external onlyOwner {
-        blacklistConctract.addBlackList(user, address(this));
+        blacklistContract.addBlackList(user);
+        emit AddedToBlacklist(user);
     }
 &nbsp;
     function removeFromBlackList(address user) external onlyOwner {
-        blacklistConctract.removeBlackList(user, address(this));
+        blacklistContract.removeBlackList(user);
+        emit RemovedFromBlacklist(user);
     }
 &nbsp;
     function _beforeTokenTransfer(address from, address to, uint256 amount) internal override view{
         amount;
-        if(blacklistConctract.getBlacklistStatus(from) || blacklistConctract.getBlacklistStatus(to)){
-            revert('Blacklisted address');
-        }
-        // require(blacklistConctract.getBlacklistStatus(from) || blacklistConctract.getBlacklistStatus(to), "One of the two addresses is blacklisted");
+        require(!blacklistContract.getBlacklistStatus(from), "Sender is blacklisted");
+        require(!blacklistContract.getBlacklistStatus(to), "Recipient is blacklisted");
     }
-}
-&nbsp;
-/** DOMANDE
- * 1) Perchè per mintare un Token mettiamo 1000000000000000000 e non 1?
- * 2) 
- */</pre></td></tr>
+}</pre></td></tr>
 </table></pre>
 <div class='push'></div><!-- for sticky footer -->
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Jul 21 2023 13:04:58 GMT+0200 (Central European Summer Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Jul 28 2023 19:11:45 GMT+0200 (Central European Summer Time)
 </div>
 </div>
 <script src="../prettify.js"></script>

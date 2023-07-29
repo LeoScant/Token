@@ -25,13 +25,14 @@ contract Blacklist is Ownable, IBlacklist {
     }
 
     // Function to allow a token (onlyOwner can call this)
-    function allowedToken(address token) external onlyOwner {
-        if (token == address(0)) revert();
+    function allowToken(address token) external onlyOwner {
+        if (token == address(0)) revert('Invalid token address');
         allowedTokens[token] = true;
     }
 
     // Function to disallow a token (onlyOwner can call this)
     function disallowToken(address token) external onlyOwner {
+        if (token == address(0)) revert('Invalid token address');
         allowedTokens[token] = false;
     }
 
