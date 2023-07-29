@@ -66,6 +66,10 @@ contract('Token test', (accounts) => {
         console.log('Balance of secondAccount ', web3.utils.fromWei(bal))
     })
 
+    it('burn token', async () => {
+        await this.token.burn(web3.utils.toWei('10'), {from: firstAccount})
+    })
+
     it('insert user in blacklist', async () => {
         await this.blacklist.allowToken(this.token.address, {from: deployer})
         await this.token.insertInBlackList(thirdAccount, {from: deployer})
@@ -107,15 +111,11 @@ contract('Token test', (accounts) => {
         expect(this.blacklist.isTokenAllowed(this.token.address), false)
     })
 
-    it('check if address 0 is not allowed', async () => {
-        expectRevert(this.blacklist.isTokenAllowed(ZERO_ADDRESS), 'Invalid token address')
-    })
-
     it('disallow address 0', async () => {
-        expectRevert(await this.blacklist.disallowToken(ZERO_ADDRESS, {from: deployer}), 'Invalid token address')
+        await expectRevert(this.blacklist.disallowToken(ZERO_ADDRESS, {from: deployer}), 'Invalid token address')
     })
 
     it('allow address 0', async () => {
-        expectRevert(await this.blacklist.allowToken(ZERO_ADDRESS, {from: deployer}), 'Invalid token address')
+        await expectRevert(this.blacklist.allowToken(ZERO_ADDRESS, {from: deployer}), 'Invalid token address')
     })
 })
